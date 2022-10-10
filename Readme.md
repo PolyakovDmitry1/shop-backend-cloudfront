@@ -1,1 +1,1 @@
-# Backend API for shop-cloudfront
+# Backend API for the shop-cloudfront
