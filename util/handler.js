@@ -11,7 +11,7 @@ export default function handler(lambda) {
     } catch (e) {
       console.error(e)
 
-      body = { error: e.message }
+      json = { error: e.message }
       statusCode = e.statusCode || 500
     }
 
