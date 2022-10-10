@@ -1,11 +1,12 @@
 export default function handler(lambda) {
   return async function (event, context) {
-    let body, statusCode
+    let json, statusCode
 
     try {
       // Run the Lambda
-      body = await lambda(event, context)
-      statusCode = 200
+      const responseLambda = await lambda(event, context)
+      statusCode = responseLambda.statusCode || 200
+      json = responseLambda.json
 
     } catch (e) {
       console.error(e)
@@ -18,7 +19,7 @@ export default function handler(lambda) {
     return {
       headers: { 'Access-Control-Allow-Origin': '*' },
       statusCode,
-      body: JSON.stringify(body)
+      body: JSON.stringify(json)
     }
   }
 }

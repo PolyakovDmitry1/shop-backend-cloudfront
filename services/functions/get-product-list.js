@@ -6,7 +6,7 @@ const getProductsList = handler(async (event) => {
 
   return {
     statusCode: 200,
-    body: productList
+    json: productList
   }
 })
 
