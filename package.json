@@ -2,7 +2,7 @@
   "name": "shop-backend-cloudfront",
   "version": "1.0.0",
   "description": "",
-  "type":"module",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -16,5 +16,11 @@
   "bugs": {
     "url": "https://github.com/PolyakovDmitry1/shop-backend-cloudfront/issues"
   },
-  "homepage": "https://github.com/PolyakovDmitry1/shop-backend-cloudfront#readme"
+  "homepage": "https://github.com/PolyakovDmitry1/shop-backend-cloudfront#readme",
+  "dependencies": {
+    "dotenv": "^16.0.3",
+    "knex": "^2.3.0",
+    "pg": "^8.8.0",
+    "pg-hstore": "^2.3.4"
+  }
 }
