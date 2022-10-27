@@ -4,6 +4,6 @@ export class NotFound extends Error {
     Error.captureStackTrace(this, this.constructor)
 
     this.name = this.constructor.name
-    this.statusCode = 404
+    this.statusCode = 400
   }
 }

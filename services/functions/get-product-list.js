@@ -1,12 +1,13 @@
-'use strict';
+'use strict'
 import handler from '../../util/handler.js'
-import { productList } from '../../mocks/products-list.js'
+import { getProducts } from '../../repository/products.js'
 
-const getProductsList = handler(async (event) => {
+const getProductsList = handler(async (_event, _context) => {
+  const products = await getProducts()
 
   return {
     statusCode: 200,
-    json: productList
+    json: products
   }
 })
 
