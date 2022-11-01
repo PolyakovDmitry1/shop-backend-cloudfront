@@ -2,6 +2,8 @@
 -- DROP TABLE public.products;
 -- DROP TABLE public.stocks;
 
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+
 -- creating product table
 CREATE TABLE public.products (
 	description text NULL,
