@@ -22,7 +22,7 @@ const createProduct = async (product = {}) => {
   const [{ id }] = await getConnectionKnex()('products').insert(newProduct).returning('id')
 
   const stock = removeEmptyKeys({ product_id: id, count: product.count })
-  if (stock.hasOwnProperty('count')) await getConnectionKnex()('stocks').insert(stock)
+  await getConnectionKnex()('stocks').insert(stock)
 
   return id
 }

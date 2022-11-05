@@ -1,0 +1,25 @@
+{
+  "name": "import-service",
+  "version": "1.0.0",
+  "description": "",
+  "type": "module",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PolyakovDmitry1/shop-backend-cloudfront.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PolyakovDmitry1/shop-backend-cloudfront/issues"
+  },
+  "homepage": "https://github.com/PolyakovDmitry1/shop-backend-cloudfront#readme",
+  "dependencies": {
+    "aws-sdk": "^2.1243.0",
+    "csv-parser": "^3.0.0",
+    "dotenv": "^16.0.3"
+  }
+}
