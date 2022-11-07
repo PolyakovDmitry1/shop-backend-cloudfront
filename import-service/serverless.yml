@@ -46,6 +46,10 @@ provider:
             - "s3:DeleteObject"
           Resource:
             - arn:aws:s3:::${env:BUCKET_NAME}/*
+        - Effect: "Allow"
+          Action:
+            - "sqs:SendMessage"
+          Resource: ${env:SQS_CATALOG_ARN}
 
 # you can define service wide environment variables here
 #  environment:

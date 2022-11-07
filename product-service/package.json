@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/PolyakovDmitry1/shop-backend-cloudfront#readme",
   "dependencies": {
+    "aws-sdk": "^2.1248.0",
     "dotenv": "^16.0.3",
     "knex": "^2.3.0",
     "pg": "^8.8.0",
