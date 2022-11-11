@@ -19,6 +19,7 @@ service: product-service-api
 # You can pin your service to only deploy with a specific Serverless version
 # Check out our docs for more details
 frameworkVersion: '3'
+useDotenv: true
 
 provider:
   name: aws
@@ -29,6 +30,14 @@ provider:
   region: us-east-1
 
 # you can add statements to the Lambda function's IAM Role here
+
+  iam:
+    role:
+      statements:
+        - Effect: "Allow"
+          Action:
+            - "sns:Publish"
+          Resource: !Ref createProductTopic
 #  iam:
 #    role:
 #      statements:
@@ -80,6 +89,43 @@ functions:
           path: /products
           method: post
           cors: true
+  catalogBatchProcess:
+    handler: index.catalogBatchProcess
+    events:
+      - sqs:
+          arn: !GetAtt CatalogItemsQueue.Arn
+          batchSize: 10
+          # maximumBatchingWindow: 60
+
+resources:
+  Resources:
+    CatalogItemsQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: ${env:SQS_CATALOG_NAME}
+
+    createProductTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: createProductTopic
+
+    emailSubscriptionForCreatingProductTopic:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: ${env:EMAIL_SUBSCRIPTION_CREATE_PRODUCT}
+        Protocol: "email"
+        TopicArn: !Ref createProductTopic
+
+    emailSubscriptionForExpensiveProductInCSVList:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: ${env:EMAIL_SUBSCRIPTION_EXPENSIVE_PRODUCT_IN_CSV_LIST}
+        Protocol: "email"
+        TopicArn: !Ref createProductTopic
+        FilterPolicy: {
+          expensive_product_in_list: [{ numeric: ['>=', 1000] }]
+        }
+
 #    The following are a few example events you can configure
 #    NOTE: Please make sure to change your handler code to work with those events
 #    Check the event documentation for details

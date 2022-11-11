@@ -1,43 +1,55 @@
 'use strict'
 import csv from 'csv-parser'
-import S3Client from 'aws-sdk/clients/s3.js'
+import { v4 as uuidv4 } from 'uuid'
+import awsClientsAll from 'aws-sdk/clients/all.js'
 import handler from '../../util/handler.js'
 
+const { S3: S3Client, SQS: sqsClient } = awsClientsAll
+
 const S3 = new S3Client({ region: process.env.BUCKET_REGION })
+const SQS = new sqsClient({ region: process.env.SQS_CATALOG_REGION })
 
 const importFileParser = handler(async (event) => {
-  const { Bucket, Key } = getKeysFromEvent(event)
-  const streamFile = S3.getObject({ Bucket, Key }).createReadStream()
-
-  const dataCSV = await getDataCSV(streamFile, { separator: ',' })
-  console.log(dataCSV)
+  const dataCSV = await getDataCSV(event, { separator: '|' })
+  await sendDataInSQS(dataCSV)
 
   try {
-    await copyFile(event)
-    console.log('The file successfully was copied to parsed folder')
+    await copyFile(event) // it copies to parsed folder
+    await deleteFile(event) // it removes from upload folder
   } catch (err) {
     console.log(err)
   }
-
-  try {
-    await deleteFile(event)
-    console.log('The file successfully was deleted from upload folder')
-  } catch (err) {
-    console.log(err)
-  }
-
 })
 
-const getDataCSV = (stream, optsCsv) => {
+const getDataCSV = (event, optsCsv) => {
   return new Promise((resolve, reject) => {
-  const results = []
+    const { Bucket, Key } = getKeysFromEvent(event)
+    const streamFile = S3.getObject({ Bucket, Key }).createReadStream()
+    const results = []
 
-  stream
-    .pipe(csv(optsCsv))
-    .on('data', (data) => results.push(data))
-    .on('end', () => resolve(results))
-    .on('error', reject)
-  })
+    streamFile
+      .pipe(csv(optsCsv))
+      .on('data', (data) => results.push(data))
+      .on('end', () => resolve(results))
+      .on('error', reject)
+    })
+}
+
+const sendDataInSQS = async (data = []) => {
+  const batchSize  = 5
+
+  for (let i = 0; i < data.length; i += batchSize) {
+    const chunk = data.slice(i, i + batchSize)
+    const params = {
+      Entries: chunk.map((v) => ({
+        Id: uuidv4(),
+        MessageBody: JSON.stringify(v)
+      })),
+      QueueUrl: process.env.SQS_CATALOG_URL
+    }
+
+    await SQS.sendMessageBatch(params).promise()
+  }
 }
 
 const getKeysFromEvent = (event) => {

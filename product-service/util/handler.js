@@ -41,7 +41,7 @@ export default function handler(lambda) {
       body: JSON.stringify(json)
     }
 
-    if (corsWhitelist.includes(event.headers.origin)) {
+    if (event.headers && corsWhitelist.includes(event.headers.origin)) {
       response.headers = {
         'Access-Control-Allow-Origin': event.headers.origin,
         'Access-Control-Allow-Methods': event.httpMethod
