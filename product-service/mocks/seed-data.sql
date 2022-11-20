@@ -49,4 +49,31 @@ VALUES
   ('2461cafa-766d-4745-a720-fae6ade7276c', 5),
 	('b4c2aec7-4242-4a2b-a1fa-63ad85d60f80', 8),
 	('b0554d6f-74da-4fff-ac75-932a7491c9dc', 3);
-	
+
+
+-- Drop table
+-- DROP TABLE public.cart_items;
+-- DROP TABLE public.carts;
+CREATE TABLE public.carts (
+	id uuid NOT NULL DEFAULT uuid_generate_v4(),
+	created_at timestamp NOT NULL DEFAULT now(),
+	updated_at timestamp NOT NULL DEFAULT now(),
+	CONSTRAINT carts_pkey PRIMARY KEY (id)
+);
+
+CREATE TABLE public.cart_items (
+	cart_id uuid NOT NULL,
+	product_id uuid NOT NULL,
+	count int4 NOT NULL DEFAULT 0,
+	CONSTRAINT fk_cart_items FOREIGN KEY (cart_id) REFERENCES carts(id) ON UPDATE CASCADE ON DELETE RESTRICT
+);
+CREATE INDEX fki_fk_cart_items ON public.cart_items USING btree (cart_id);
+
+-- filling data up carts and cart_items tables
+INSERT INTO carts (id)
+values ('101bfae9-5015-40ee-927f-cda8a357446a');
+
+INSERT INTO cart_items (cart_id, product_id, count)
+VALUES
+  ('101bfae9-5015-40ee-927f-cda8a357446a', '2461cafa-766d-4745-a720-fae6ade7276c', 1),
+	('101bfae9-5015-40ee-927f-cda8a357446a', 'b4c2aec7-4242-4a2b-a1fa-63ad85d60f80', 2);
